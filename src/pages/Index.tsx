@@ -5,6 +5,7 @@ import { useProfile } from '@/hooks/useProfile';
 import WeatherCard from '@/components/WeatherCard';
 import SearchBar from '@/components/SearchBar';
 import ForecastCard from '@/components/ForecastCard';
+import HourlyForecast from '@/components/HourlyForecast';
 import Header from '@/components/Header';
 import { fetchWeatherData, WeatherResponse } from '@/utils/weatherApi';
 import { useToast } from '@/hooks/use-toast';
@@ -75,23 +76,31 @@ const Index = () => {
           )}
 
           {weatherData && !loading && (
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-7xl mx-auto animate-fade-in">
-              <div className="w-full">
-                <WeatherCard
-                  weather={{
-                    location: weatherData.location,
-                    temperature: weatherData.current.temperature,
-                    condition: weatherData.current.condition,
-                    humidity: weatherData.current.humidity,
-                    windSpeed: weatherData.current.windSpeed,
-                    icon: weatherData.current.icon,
-                  }}
-                  temperatureUnit={profile?.temperature_unit || 'celsius'}
-                />
+            <div className="space-y-6 lg:space-y-8 max-w-7xl mx-auto animate-fade-in">
+              <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+                <div className="w-full">
+                  <WeatherCard
+                    weather={{
+                      location: weatherData.location,
+                      temperature: weatherData.current.temperature,
+                      condition: weatherData.current.condition,
+                      humidity: weatherData.current.humidity,
+                      windSpeed: weatherData.current.windSpeed,
+                      icon: weatherData.current.icon,
+                    }}
+                    temperatureUnit={profile?.temperature_unit || 'celsius'}
+                  />
+                </div>
+                <div className="w-full">
+                  <ForecastCard 
+                    forecast={weatherData.forecast} 
+                    temperatureUnit={profile?.temperature_unit || 'celsius'}
+                  />
+                </div>
               </div>
               <div className="w-full">
-                <ForecastCard 
-                  forecast={weatherData.forecast} 
+                <HourlyForecast 
+                  hourlyData={weatherData.hourly} 
                   temperatureUnit={profile?.temperature_unit || 'celsius'}
                 />
               </div>

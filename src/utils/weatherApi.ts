@@ -17,6 +17,12 @@ export interface WeatherResponse {
     condition: string;
     icon: string;
   }>;
+  hourly: Array<{
+    time: string;
+    temperature: number;
+    condition: string;
+    icon: string;
+  }>;
 }
 
 const conditions = ['Clear', 'Cloudy', 'Rainy', 'Sunny', 'Partly Cloudy'];
@@ -46,6 +52,24 @@ const mockWeatherData = (city: string): WeatherResponse => {
     return forecast;
   };
 
+  const generateHourlyForecast = () => {
+    const hourly = [];
+    const currentHour = new Date().getHours();
+    
+    for (let i = 0; i < 24; i++) {
+      const hour = (currentHour + i) % 24;
+      const time = `${hour.toString().padStart(2, '0')}:00`;
+      
+      hourly.push({
+        time,
+        temperature: Math.floor(Math.random() * 20) + 10,
+        condition: conditions[Math.floor(Math.random() * conditions.length)],
+        icon: icons[Math.floor(Math.random() * icons.length)]
+      });
+    }
+    return hourly;
+  };
+
   return {
     location: city,
     current: {
@@ -55,7 +79,8 @@ const mockWeatherData = (city: string): WeatherResponse => {
       windSpeed: Math.floor(Math.random() * 20) + 5,
       icon: randomIcon
     },
-    forecast: generateForecast()
+    forecast: generateForecast(),
+    hourly: generateHourlyForecast()
   };
 };
 
@@ -103,7 +128,17 @@ export const fetchWeatherData = async (city: string): Promise<WeatherResponse> =
         condition: item.weather[0].main,
         icon: item.weather[0].icon
       };
-    })
+    }),
+    hourly: data.list.slice(0, 24).map((item: any) => ({
+      time: new Date(item.dt * 1000).toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      }),
+      temperature: item.main.temp,
+      condition: item.weather[0].main,
+      icon: item.weather[0].icon
+    }))
   };
 };
 */
