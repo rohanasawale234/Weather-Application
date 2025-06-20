@@ -1,54 +1,63 @@
 
 import React from 'react';
-import { Cloud, CloudRain, Sun, Snowflake } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
-interface ForecastData {
+interface ForecastDay {
+  day: string;
   date: string;
+  high: number;
+  low: number;
   condition: string;
-  maxTemp: number;
-  minTemp: number;
   icon: string;
 }
 
 interface ForecastCardProps {
-  forecast: ForecastData[];
+  forecast: ForecastDay[];
+  temperatureUnit?: 'celsius' | 'fahrenheit';
 }
 
-const ForecastCard: React.FC<ForecastCardProps> = ({ forecast }) => {
-  const getWeatherIcon = (condition: string) => {
-    const conditionLower = condition.toLowerCase();
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
-      return <CloudRain className="w-8 h-8 text-blue-400" />;
-    } else if (conditionLower.includes('cloud')) {
-      return <Cloud className="w-8 h-8 text-gray-600" />;
-    } else if (conditionLower.includes('snow')) {
-      return <Snowflake className="w-8 h-8 text-blue-300" />;
-    } else {
-      return <Sun className="w-8 h-8 text-yellow-500" />;
+const ForecastCard: React.FC<ForecastCardProps> = ({ forecast, temperatureUnit = 'celsius' }) => {
+  const convertTemperature = (temp: number) => {
+    if (temperatureUnit === 'fahrenheit') {
+      return Math.round((temp * 9/5) + 32);
     }
+    return Math.round(temp);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+  const getTemperatureUnit = () => {
+    return temperatureUnit === 'fahrenheit' ? '°F' : '°C';
   };
 
   return (
-    <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
-      <h3 className="text-2xl font-bold text-white mb-6">5-Day Forecast</h3>
+    <div className="bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/20 dark:border-gray-700/20 shadow-xl">
+      <div className="flex items-center mb-6">
+        <Calendar className="h-6 w-6 text-white mr-3" />
+        <h3 className="text-xl md:text-2xl font-bold text-white">5-Day Forecast</h3>
+      </div>
+      
       <div className="space-y-4">
         {forecast.map((day, index) => (
-          <div key={index} className="flex items-center justify-between p-4 bg-white bg-opacity-10 rounded-xl hover:bg-opacity-20 transition-all duration-200">
-            <div className="flex items-center space-x-4">
-              {getWeatherIcon(day.condition)}
-              <div>
-                <p className="text-white font-semibold">{formatDate(day.date)}</p>
-                <p className="text-white text-sm opacity-80">{day.condition}</p>
+          <div
+            key={index}
+            className="bg-white/10 dark:bg-black/10 rounded-2xl p-4 backdrop-blur-sm hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-200"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center flex-1">
+                <div className="text-2xl md:text-3xl mr-3 md:mr-4">{day.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-white font-semibold text-sm md:text-base truncate">{day.day}</div>
+                  <div className="text-white/70 text-xs md:text-sm">{day.date}</div>
+                  <div className="text-white/80 text-xs md:text-sm truncate">{day.condition}</div>
+                </div>
               </div>
-            </div>
-            <div className="text-right">
-              <p className="text-white font-semibold">{Math.round(day.maxTemp)}°</p>
-              <p className="text-white text-sm opacity-80">{Math.round(day.minTemp)}°</p>
+              <div className="text-right ml-2">
+                <div className="text-white font-bold text-lg md:text-xl">
+                  {convertTemperature(day.high)}{getTemperatureUnit()}
+                </div>
+                <div className="text-white/60 text-sm md:text-base">
+                  {convertTemperature(day.low)}{getTemperatureUnit()}
+                </div>
+              </div>
             </div>
           </div>
         ))}

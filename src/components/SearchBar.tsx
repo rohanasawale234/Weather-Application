@@ -28,7 +28,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, loading = false }) => {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Search for a city..."
-          className="block w-full pl-10 pr-3 py-4 border border-gray-200 rounded-2xl leading-5 bg-white bg-opacity-20 backdrop-blur-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-transparent transition-all duration-300"
+          className="block w-full pl-10 pr-4 py-3 md:py-4 border border-gray-200 rounded-2xl leading-5 bg-white/20 dark:bg-black/20 backdrop-blur-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-gray-400/50 focus:border-transparent transition-all duration-300 text-sm md:text-base"
           disabled={loading}
         />
         <button
@@ -36,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, loading = false }) => {
           disabled={loading || !city.trim()}
           className="absolute inset-y-0 right-0 pr-3 flex items-center"
         >
-          <div className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl p-2 transition-all duration-200 disabled:opacity-50">
+          <div className="bg-white/20 dark:bg-black/20 hover:bg-white/30 dark:hover:bg-black/30 rounded-xl p-2 transition-all duration-200 disabled:opacity-50">
             <Search className="h-4 w-4 text-white" />
           </div>
         </button>
