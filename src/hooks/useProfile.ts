@@ -43,7 +43,15 @@ export const useProfile = () => {
         return;
       }
 
-      setProfile(data);
+      // Type cast the database response to ensure proper types
+      setProfile({
+        id: data.id,
+        email: data.email,
+        full_name: data.full_name,
+        default_city: data.default_city,
+        temperature_unit: (data.temperature_unit as 'celsius' | 'fahrenheit') || 'celsius',
+        theme: (data.theme as 'light' | 'dark' | 'system') || 'system',
+      });
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {

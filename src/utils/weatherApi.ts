@@ -10,29 +10,37 @@ export interface WeatherResponse {
     icon: string;
   };
   forecast: Array<{
+    day: string;
     date: string;
+    high: number;
+    low: number;
     condition: string;
-    maxTemp: number;
-    minTemp: number;
     icon: string;
   }>;
 }
 
+const conditions = ['Clear', 'Cloudy', 'Rainy', 'Sunny', 'Partly Cloudy'];
+const icons = ['☀️', '⛅', '🌧️', '🌤️', '☁️'];
+
 const mockWeatherData = (city: string): WeatherResponse => {
-  const conditions = ['Clear', 'Cloudy', 'Rainy', 'Sunny', 'Partly Cloudy'];
   const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+  const randomIcon = icons[Math.floor(Math.random() * icons.length)];
   
   const generateForecast = () => {
     const forecast = [];
-    for (let i = 1; i <= 5; i++) {
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    
+    for (let i = 0; i < 5; i++) {
       const date = new Date();
-      date.setDate(date.getDate() + i);
+      date.setDate(date.getDate() + i + 1);
+      
       forecast.push({
-        date: date.toISOString(),
+        day: days[i],
+        date: date.toLocaleDateString(),
+        high: Math.floor(Math.random() * 15) + 20,
+        low: Math.floor(Math.random() * 10) + 10,
         condition: conditions[Math.floor(Math.random() * conditions.length)],
-        maxTemp: Math.floor(Math.random() * 15) + 20,
-        minTemp: Math.floor(Math.random() * 10) + 10,
-        icon: 'icon'
+        icon: icons[Math.floor(Math.random() * icons.length)]
       });
     }
     return forecast;
@@ -45,7 +53,7 @@ const mockWeatherData = (city: string): WeatherResponse => {
       condition: randomCondition,
       humidity: Math.floor(Math.random() * 40) + 40,
       windSpeed: Math.floor(Math.random() * 20) + 5,
-      icon: 'icon'
+      icon: randomIcon
     },
     forecast: generateForecast()
   };
@@ -82,13 +90,20 @@ export const fetchWeatherData = async (city: string): Promise<WeatherResponse> =
       windSpeed: data.list[0].wind.speed,
       icon: data.list[0].weather[0].icon
     },
-    forecast: data.list.slice(1, 6).map((item: any) => ({
-      date: item.dt_txt,
-      condition: item.weather[0].main,
-      maxTemp: item.main.temp_max,
-      minTemp: item.main.temp_min,
-      icon: item.weather[0].icon
-    }))
+    forecast: data.list.slice(1, 6).map((item: any, index: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() + index + 1);
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      
+      return {
+        day: days[index],
+        date: date.toLocaleDateString(),
+        high: item.main.temp_max,
+        low: item.main.temp_min,
+        condition: item.weather[0].main,
+        icon: item.weather[0].icon
+      };
+    })
   };
 };
 */
